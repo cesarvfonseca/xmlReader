@@ -7,3 +7,12 @@ C:\Users\cesarvfonseca\Documents\Visual Studio 2012\Projects\leerXML\leerXML\bin
 C:\Users\cesarvfonseca\Documents\Visual Studio 2012\Projects\leerXML\leerXML\bin\Debug\leerXML.pdb
 C:\Users\cesarvfonseca\Documents\Visual Studio 2012\Projects\leerXML\leerXML\obj\Debug\leerXML.exe
 C:\Users\cesarvfonseca\Documents\Visual Studio 2012\Projects\leerXML\leerXML\obj\Debug\leerXML.pdb
+C:\Users\cvalenciano\Documents\GitHub\xmlReader\leerXML\bin\Debug\leerXML.exe.config
+C:\Users\cvalenciano\Documents\GitHub\xmlReader\leerXML\obj\Debug\leerXML.exe
+C:\Users\cvalenciano\Documents\GitHub\xmlReader\leerXML\obj\Debug\leerXML.pdb
+C:\Users\cvalenciano\Documents\GitHub\xmlReader\leerXML\bin\Debug\leerXML.exe
+C:\Users\cvalenciano\Documents\GitHub\xmlReader\leerXML\bin\Debug\leerXML.pdb
+C:\Users\cvalenciano\Documents\GitHub\xmlReader\leerXML\obj\Debug\leerXML.csprojResolveAssemblyReference.cache
+C:\Users\cvalenciano\Documents\GitHub\xmlReader\leerXML\obj\Debug\leerXML.Form1.resources
+C:\Users\cvalenciano\Documents\GitHub\xmlReader\leerXML\obj\Debug\leerXML.Properties.Resources.resources
+C:\Users\cvalenciano\Documents\GitHub\xmlReader\leerXML\obj\Debug\leerXML.csproj.GenerateResource.Cache

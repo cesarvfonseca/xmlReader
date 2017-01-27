@@ -28,13 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.btnLeer = new System.Windows.Forms.Button();
             this.txtRuta = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnLeer
             // 
-            this.btnLeer.Location = new System.Drawing.Point(213, 18);
+            this.btnLeer.Location = new System.Drawing.Point(252, 16);
             this.btnLeer.Name = "btnLeer";
             this.btnLeer.Size = new System.Drawing.Size(75, 28);
             this.btnLeer.TabIndex = 0;
@@ -53,9 +54,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(300, 58);
+            this.ClientSize = new System.Drawing.Size(339, 71);
             this.Controls.Add(this.txtRuta);
             this.Controls.Add(this.btnLeer);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "Leer XML";
             this.ResumeLayout(false);
