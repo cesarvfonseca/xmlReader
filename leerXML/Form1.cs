@@ -11,6 +11,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.Linq;
 using System.Data.SqlClient;
+using System.Globalization;
 
 namespace leerXML
 {
@@ -18,18 +19,102 @@ namespace leerXML
     {
         //SqlConnection con = new SqlConnection("Data Source = ATALAYA-STD;" + "Initial Catalog = CSRAPP ; Integrated Security = true; MultipleActiveResultSets=true;");
         SqlConnection con = new SqlConnection("Data Source=MEXQ-SERVER4;Initial Catalog=MEXQAppJulio;Persist Security Info=False;User ID=sa;Password=P@ssw0rd; MultipleActiveResultSets=true;");
-        string periodo,ruta,insertaD;
+        string periodo, ruta, insertaD;
+        string a, m;
         string UUID,idNota,folio,serie,fecha,cliente,rfc;
         SqlCommand comando,cmd;
         XmlReader reader;
 
+
+
         public Form1()
         {
             InitializeComponent();
+            llenarCombo_anio();
+            llenarCombo_mes();
+        }
+
+        private void llenarCombo_anio() 
+        {
+            String sDate = DateTime.Now.ToString();
+            DateTime datevalue = (Convert.ToDateTime(sDate.ToString()));
+            String anio = datevalue.Year.ToString();
+            cbAnio.Items.Clear();
+            cbAnio.Items.Add(anio);
+            cbAnio.Items.Add(Int32.Parse(anio) - 1);
+            cbAnio.Items.Add(Int32.Parse(anio) - 2);
+            cbAnio.Items.Add(Int32.Parse(anio) - 3);
+            cbAnio.Items.Add(Int32.Parse(anio) - 4);
+            cbAnio.Items.Add(Int32.Parse(anio) - 5);
+        }
+
+        private void llenarCombo_mes()
+        {
+            cbMes.Items.Clear();
+            cbMes.Items.Add("Enero");
+            cbMes.Items.Add("Febrero");
+            cbMes.Items.Add("Marzo");
+            cbMes.Items.Add("Abril");
+            cbMes.Items.Add("Mayo");
+            cbMes.Items.Add("Junio");
+            cbMes.Items.Add("Julio");
+            cbMes.Items.Add("Agosto");
+            cbMes.Items.Add("Septiembre");
+            cbMes.Items.Add("Octubre");
+            cbMes.Items.Add("Noviembre");
+            cbMes.Items.Add("Diciembre");
+        }
+
+        private void valorMes()
+        {
+            switch (cbMes.SelectedIndex.ToString().Trim())
+            {
+                case "Enero":
+                    m = "01";
+                    break;
+                case "Febrero":
+                    m = "02";
+                    break;
+                case "Marzo":
+                    m = "03";
+                    break;
+                case "Abril":
+                    m = "04";
+                    break;
+                case "Mayo":
+                    m = "05";
+                    break;
+                case "Junio":
+                    m = "06";
+                    break;
+                case "Julio":
+                    m = "07";
+                    break;
+                case "Agosto":
+                    m = "08";
+                    break;
+                case "Septiembre":
+                    m = "09";
+                    break;
+                case "Octubre":
+                    m = "10";
+                    break;
+                case "Noviembre":
+                    m = "11";
+                    break;
+                case "Diciembre":
+                    m = "12";
+                    break;
+                default:
+                    break;
+            }
+
         }
 
         private void btnLeer_Click(object sender, EventArgs e)
         {
+                a = cbAnio.SelectedValue.ToString();
+                
                 UUID = string.Empty;
                 periodo = txtRuta.Text;
                 string query = "EXEC vData '" + periodo + "'";
@@ -99,38 +184,6 @@ namespace leerXML
                 con.Close();
                 txtRuta.Text = string.Empty;
             
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            /*string rutaArchivo = string.Empty;
-            OpenFileDialog ofd = new OpenFileDialog();
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                rutaArchivo = ofd.FileName;
-            }
-            txtRuta.Text = rutaArchivo;
-            string query = "SELECT ad.BatNbr,ad.PerPost,"+
-                                    "att.NoteID,att.NameOfFile,att.Location"+
-                                    "FROM CSRAPP.dbo.apdoc ad"+
-                                    "INNER JOIN CSRDEV.dbo.attachment att"+
-                                    "ON ad.NoteID=att.NoteID"+
-                                    "WHERE att.NoteID='3593' AND att.Location LIKE '%.xml'";
-            periodo = txtRuta.Text;
-            string query = "EXEC vData '"+periodo+"'";
-            SqlCommand comando = new SqlCommand(query, con);
-            con.Open();
-            SqlDataReader leer = comando.ExecuteReader();
-            if (leer.Read() == true)
-            {
-                //MessageBox.Show("Registro encontrado");
-                txtRuta.Text = leer["Location"].ToString();
-            }
-            else {
-                //MessageBox.Show("Registro NO encontrado");
-                txtRuta.Text = "";
-            }
-            con.Close();*/
         }
     }
 }
