@@ -32,6 +32,7 @@
             this.btnLeer = new System.Windows.Forms.Button();
             this.cbMes = new System.Windows.Forms.ComboBox();
             this.cbAnio = new System.Windows.Forms.ComboBox();
+            this.btnVLogs = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnLeer
@@ -61,12 +62,25 @@
             this.cbAnio.Size = new System.Drawing.Size(86, 21);
             this.cbAnio.TabIndex = 4;
             // 
+            // btnVLogs
+            // 
+            this.btnVLogs.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.btnVLogs.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.btnVLogs.Location = new System.Drawing.Point(377, 9);
+            this.btnVLogs.Name = "btnVLogs";
+            this.btnVLogs.Size = new System.Drawing.Size(75, 27);
+            this.btnVLogs.TabIndex = 5;
+            this.btnVLogs.Text = "Ver Errores";
+            this.btnVLogs.UseVisualStyleBackColor = false;
+            this.btnVLogs.Click += new System.EventHandler(this.btnVLogs_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.ClientSize = new System.Drawing.Size(377, 46);
+            this.ClientSize = new System.Drawing.Size(468, 46);
+            this.Controls.Add(this.btnVLogs);
             this.Controls.Add(this.cbAnio);
             this.Controls.Add(this.cbMes);
             this.Controls.Add(this.btnLeer);
@@ -83,6 +97,7 @@
         private System.Windows.Forms.Button btnLeer;
         private System.Windows.Forms.ComboBox cbMes;
         private System.Windows.Forms.ComboBox cbAnio;
+        private System.Windows.Forms.Button btnVLogs;
     }
 }
 

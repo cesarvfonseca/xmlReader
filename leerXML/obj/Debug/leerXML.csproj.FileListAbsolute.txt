@@ -16,3 +16,4 @@ C:\Users\cvalenciano\Documents\GitHub\xmlReader\leerXML\obj\Debug\leerXML.csproj
 C:\Users\cvalenciano\Documents\GitHub\xmlReader\leerXML\obj\Debug\leerXML.Form1.resources
 C:\Users\cvalenciano\Documents\GitHub\xmlReader\leerXML\obj\Debug\leerXML.Properties.Resources.resources
 C:\Users\cvalenciano\Documents\GitHub\xmlReader\leerXML\obj\Debug\leerXML.csproj.GenerateResource.Cache
+C:\Users\cvalenciano\Documents\GitHub\xmlReader\leerXML\obj\Debug\leerXML.Logs.resources

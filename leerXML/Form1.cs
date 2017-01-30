@@ -189,5 +189,11 @@ namespace leerXML
             cbAnio.SelectedIndex = -1;
             cbMes.SelectedIndex = -1;
         }
+
+        private void btnVLogs_Click(object sender, EventArgs e)
+        {
+            Logs logs = new Logs();
+            logs.Show();
+        }
     }
 }
