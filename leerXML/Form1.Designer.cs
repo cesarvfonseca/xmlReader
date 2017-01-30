@@ -38,9 +38,9 @@
             // btnLeer
             // 
             this.btnLeer.BackColor = System.Drawing.SystemColors.MenuBar;
-            this.btnLeer.Location = new System.Drawing.Point(278, 9);
+            this.btnLeer.Location = new System.Drawing.Point(13, 39);
             this.btnLeer.Name = "btnLeer";
-            this.btnLeer.Size = new System.Drawing.Size(92, 28);
+            this.btnLeer.Size = new System.Drawing.Size(162, 28);
             this.btnLeer.TabIndex = 0;
             this.btnLeer.Text = "Leer";
             this.btnLeer.UseVisualStyleBackColor = false;
@@ -64,11 +64,13 @@
             // 
             // btnVLogs
             // 
-            this.btnVLogs.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.btnVLogs.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.btnVLogs.FlatAppearance.BorderColor = System.Drawing.Color.WhiteSmoke;
+            this.btnVLogs.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnVLogs.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.btnVLogs.Location = new System.Drawing.Point(377, 9);
+            this.btnVLogs.Location = new System.Drawing.Point(186, 40);
             this.btnVLogs.Name = "btnVLogs";
-            this.btnVLogs.Size = new System.Drawing.Size(75, 27);
+            this.btnVLogs.Size = new System.Drawing.Size(86, 27);
             this.btnVLogs.TabIndex = 5;
             this.btnVLogs.Text = "Ver Errores";
             this.btnVLogs.UseVisualStyleBackColor = false;
@@ -79,7 +81,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.ClientSize = new System.Drawing.Size(468, 46);
+            this.ClientSize = new System.Drawing.Size(278, 76);
             this.Controls.Add(this.btnVLogs);
             this.Controls.Add(this.cbAnio);
             this.Controls.Add(this.cbMes);

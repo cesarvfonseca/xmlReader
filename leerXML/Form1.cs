@@ -19,7 +19,7 @@ namespace leerXML
     {
         //SqlConnection con = new SqlConnection("Data Source = ATALAYA-STD;" + "Initial Catalog = CSRAPP ; Integrated Security = true; MultipleActiveResultSets=true;");
         SqlConnection con = new SqlConnection("Data Source=MEXQ-SERVER4;Initial Catalog=MEXQAppJulio;Persist Security Info=False;User ID=sa;Password=P@ssw0rd; MultipleActiveResultSets=true;");
-        string periodo, ruta, insertaD,insertaLog;
+        string periodo, ruta, insertaD, insertaLog;
         string a = string.Empty, m = string.Empty;
         string err = string.Empty;
         string UUID, idNota, folio, serie, fecha, cliente, rfc;
@@ -126,12 +126,12 @@ namespace leerXML
             {
                 while (leer.Read())
                 {
-
                     ruta = leer["Location"].ToString();
                     idNota = leer["NoteID"].ToString();
                     reader = XmlReader.Create(ruta);
                     try
                     {
+                        //INICIA LECTURA DE XML
                         while (reader.Read())
                         {
                             if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "tfd:TimbreFiscalDigital"))
@@ -140,8 +140,6 @@ namespace leerXML
                                 {
                                     UUID = reader.GetAttribute("UUID");
                                     fecha = reader.GetAttribute("FechaTimbrado");
-                                    //insertaD = "INSERT into xmldata (UUID,FECHA_TIMBRADO) " +
-                                    //    " VALUES ('" + UUID + "','" + fecha + "');";
                                     insertaD = "insertRecords'" + UUID + "','" + folio + "','" + serie + "','" + fecha + "','" + cliente + "','" + rfc + "','" + idNota + "','" + ruta + "'";
                                     cmd = new SqlCommand(insertaD, con);
                                     cmd.ExecuteNonQuery();
@@ -154,7 +152,6 @@ namespace leerXML
                                     folio = reader.GetAttribute("folio");
                                     serie = reader.GetAttribute("serie");
                                 }
-
                             }
                             if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "cfdi:Emisor"))
                             {
@@ -165,16 +162,15 @@ namespace leerXML
                                 }
                             }
                         }
-
+                        //TERMINA LECTURA DE XML
                     }
                     catch (Exception ex)
                     {
                         System.IO.File.AppendAllText(@"C:\Users\Public\Documents\logxml.txt", ruta + "\r\n" + ex.Message + "\r\n");
                         err = err + ex.Message + "\n" + ruta;
-                        insertaLog = "INSERT into logxml (NoteID,Location,Error)  VALUES ('" + idNota + "','" + ruta + "','" + ex.Message + "');";
+                        insertaLog = "INSERT into logxml (NoteID,Location)  VALUES ('" + idNota + "','" + ruta + "');";
                         cmd = new SqlCommand(insertaLog, con);
                         cmd.ExecuteNonQuery();
-                        //MessageBox.Show("Error: " + ex.Message+"\n\rArchivo: "+ruta, "Error de lectura", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     ruta = string.Empty;
                 }
