@@ -1,11 +1,14 @@
-SELECT * FROM CSRAPP.dbo.APDoc
-SELECT * FROM CSRDEV.dbo.attachment
+SELECT * FROM MEXQAPPJulio.dbo.APDoc
+SELECT * FROM MEXQSYSJulio.dbo.attachment
 EXEC vData'201602'
 --insertRecords 'CB3FCC75-62A4-4B6F-B671-461BBEF819FB','1539707','B','2016-05-12T12:20:36','ETN TURISTAR LUJO, S.A. DE C.V.','TLU080610C81','3212','C:\CFDi\fact55_cte17_cdfi.xml'
 --TRUNCATE TABLE xmldata;
+--TRUNCATE TABLE logxml;
+SELECT * FROM xmldata;
+SELECT * FROM logxml;
 
 /*CREAR BD XMLDATA*/
-USE [CSRAPP]
+USE [MEXQAPPJULIO]
 GO
 /****** Object:  Table [dbo].[xmldata]    Script Date: 01/24/2017 08:30:35 ******/
 SET ANSI_NULLS ON
@@ -25,6 +28,23 @@ CREATE TABLE [dbo].[xmldata](
 ) ON [PRIMARY]
 GO
 /*CREAR BD XMLDATA*/
+/*CREAR BD LOGXML*/
+USE [MEXQAPPJULIO]
+GO
+/****** Object:  Table [dbo].[logxml]    Script Date: 01/24/2017 08:30:35 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[logxml](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[NoteID] [nvarchar](50) NULL,
+	[Location] [nvarchar](250) NULL,
+	[Error] [nvarchar](250) NULL,
+	[DateCreated] DATETIME NOT NULL DEFAULT(GETDATE())
+) ON [PRIMARY]
+GO
+/*CREAR BD LOGXML*/
 /*INSERTAR DATOS*/
 CREATE PROCEDURE dbo.insertRecords(
 	@UUID varchar(80),
@@ -44,7 +64,7 @@ CREATE PROCEDURE dbo.insertRecords(
 		END
 /*INSERTAR DATOS*/
 /*LISTAR DATOS*/
-USE [CSRAPP]
+USE [MEXQAPPJULIO]
 GO
 /****** Object:  StoredProcedure [dbo].[vData]    Script Date: 01/23/2017 14:00:18 ******/
 SET ANSI_NULLS ON
@@ -56,8 +76,8 @@ ALTER procedure [dbo].[vData]
 as
 SELECT ad.BatNbr,ad.PerPost,
 att.NoteID,att.NameOfFile,att.Location
-FROM CSRAPP.dbo.apdoc ad
-INNER JOIN CSRDEV.dbo.attachment att
+FROM MEXQAPPJULIO.dbo.apdoc ad
+INNER JOIN MEXQSYSJULIO.dbo.attachment att
 ON ad.NoteID=att.NoteID
 WHERE ad.PerPost=@periodo AND att.Location LIKE '%.xml' ORDER BY att.NameOfFile
 /*LISTAR DATOS*/
