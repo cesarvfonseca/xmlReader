@@ -141,6 +141,17 @@ namespace leerXML
                                     UUID = reader.GetAttribute("UUID");
                                     fecha = reader.GetAttribute("FechaTimbrado");
                                     insertaD = "insertRecords'" + UUID + "','" + folio + "','" + serie + "','" + fecha + "','" + cliente + "','" + rfc + "','" + idNota + "','" + ruta + "'";
+                                    /*insertaD = "insertRecords '@uuid','@folio','@serie','@fecha','@cliente','@rfc','@idnota','@ruta'";
+                                    SqlCommand qcom = new SqlCommand(insertaD, con);
+                                    qcom.Parameters.AddWithValue("@uuid", UUID);
+                                    qcom.Parameters.AddWithValue("@folio", folio);
+                                    qcom.Parameters.AddWithValue("@serie", serie);
+                                    qcom.Parameters.AddWithValue("@fecha", fecha);
+                                    qcom.Parameters.AddWithValue("@cliente", cliente);
+                                    qcom.Parameters.AddWithValue("@rfc", rfc);
+                                    qcom.Parameters.AddWithValue("@idnota", idNota);
+                                    qcom.Parameters.AddWithValue("@ruta", ruta);
+                                    qcom.ExecuteNonQuery();*/
                                     cmd = new SqlCommand(insertaD, con);
                                     cmd.ExecuteNonQuery();
                                 }
@@ -168,13 +179,20 @@ namespace leerXML
                     {
                         System.IO.File.AppendAllText(@"C:\Users\Public\Documents\logxml.txt", ruta + "\r\n" + ex.Message + "\r\n");
                         err = err + ex.Message + "\n" + ruta;
-                        insertaLog = "INSERT into logxml (NoteID,Location)  VALUES ('" + idNota + "','" + ruta + "');";
-                        cmd = new SqlCommand(insertaLog, con);
-                        cmd.ExecuteNonQuery();
+
+                        insertaLog = "INSERT into logxml (NoteID,Location,error)  VALUES (@idn,@ruta,@error);";
+                        SqlCommand command = new SqlCommand(insertaLog, con);
+                        command.Parameters.AddWithValue("@idn", idNota);
+                        command.Parameters.AddWithValue("@ruta", ruta);
+                        command.Parameters.AddWithValue("@error", ex.Message);
+                        command.ExecuteNonQuery();
                     }
                     ruta = string.Empty;
                 }
-                MessageBox.Show(err, "Errores de lectura", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if(err.Length>0)
+                {
+                    MessageBox.Show(err, "Errores de lectura", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
                 MessageBox.Show("Datos guardados exitosamente!!!");
             }
             else
