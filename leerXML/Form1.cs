@@ -23,10 +23,9 @@ namespace leerXML
         string a = string.Empty, m = string.Empty;
         string err = string.Empty;
         string UUID, idNota, folio, serie, fecha, cliente, rfc;
+        float  importe;
         SqlCommand comando, cmd;
         XmlReader reader;
-
-
 
         public Form1()
         {
@@ -112,8 +111,98 @@ namespace leerXML
 
         }
 
+        //private void btnLeer_Click(object sender, EventArgs e)
+        //{
+        //    a = cbAnio.Text;
+        //    valorMes();
+        //    UUID = string.Empty;
+        //    periodo = a + m;
+        //    string query = "EXEC vData '" + periodo + "'";
+        //    comando = new SqlCommand(query, con);
+        //    con.Open();
+        //    SqlDataReader leer = comando.ExecuteReader();
+        //    if (leer.HasRows)
+        //    {
+        //        while (leer.Read())
+        //        {
+        //            ruta = leer["Location"].ToString();
+        //            idNota = leer["NoteID"].ToString();
+        //            reader = XmlReader.Create(ruta);
+        //            try
+        //            {
+        //                //INICIA LECTURA DE XML
+        //                while (reader.Read())
+        //                {
+        //                    if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "tfd:TimbreFiscalDigital"))
+        //                    {
+        //                        if (reader.HasAttributes)
+        //                        {
+        //                            UUID = reader.GetAttribute("UUID");
+        //                            fecha = reader.GetAttribute("FechaTimbrado");
+        //                            insertaD = "insertRecords'" + UUID + "','" + folio + "','" + serie + "','" + fecha + "','" + cliente + "','" + rfc + "','" + idNota + "','" + ruta + "'";
+        //                            cmd = new SqlCommand(insertaD, con);
+        //                            cmd.ExecuteNonQuery();
+        //                        }
+        //                    }
+        //                    if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "cfdi:Comprobante"))
+        //                    {
+        //                        if (reader.HasAttributes)
+        //                        {
+        //                            folio = reader.GetAttribute("folio");
+        //                            serie = reader.GetAttribute("serie");
+        //                        }
+        //                    }
+        //                    if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "cfdi:Emisor"))
+        //                    {
+        //                        if (reader.HasAttributes)
+        //                        {
+        //                            rfc = reader.GetAttribute("rfc");
+        //                            cliente = reader.GetAttribute("nombre");
+        //                        }
+        //                    }
+        //                    if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "cfdi:Conceptos"))
+        //                    {
+        //                        if (reader.HasAttributes)
+        //                        {
+        //                            rfc = reader.GetAttribute("rfc");
+        //                            cliente = reader.GetAttribute("nombre");
+        //                        }
+        //                    }
+        //                }
+        //                //TERMINA LECTURA DE XML
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                //System.IO.File.AppendAllText(@"C:\Users\Public\Documents\logxml.txt", ruta + "\r\n" + ex.Message + "\r\n");
+        //                err = err + ex.Message + "\n" + ruta;
+
+        //                insertaLog = "INSERT into logxml (NoteID,Location,error)  VALUES (@idn,@ruta,@error);";
+        //                SqlCommand command = new SqlCommand(insertaLog, con);
+        //                command.Parameters.AddWithValue("@idn", idNota);
+        //                command.Parameters.AddWithValue("@ruta", ruta);
+        //                command.Parameters.AddWithValue("@error", ex.Message);
+        //                command.ExecuteNonQuery();
+        //            }
+        //            ruta = string.Empty;
+        //        }
+        //        if(err.Length>0)
+        //        {
+        //            MessageBox.Show(err, "Errores de lectura", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        }
+        //        MessageBox.Show("Datos guardados exitosamente!!!");
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("No se encontro información =(");
+        //    }
+        //    con.Close();
+        //    cbAnio.SelectedIndex = -1;
+        //    cbMes.SelectedIndex = -1;
+        //}
+
         private void btnLeer_Click(object sender, EventArgs e)
         {
+            importe = 0.0F;
             a = cbAnio.Text;
             valorMes();
             UUID = string.Empty;
@@ -122,83 +211,31 @@ namespace leerXML
             comando = new SqlCommand(query, con);
             con.Open();
             SqlDataReader leer = comando.ExecuteReader();
-            if (leer.HasRows)
-            {
-                while (leer.Read())
-                {
-                    ruta = leer["Location"].ToString();
-                    idNota = leer["NoteID"].ToString();
-                    reader = XmlReader.Create(ruta);
+
+            reader = XmlReader.Create("C:\\Users\\cvalenciano\\Desktop\\CE_LAyout\\xmlTest\\cerosss.xml");
                     try
                     {
                         //INICIA LECTURA DE XML
                         while (reader.Read())
                         {
-                            if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "tfd:TimbreFiscalDigital"))
+                            if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "cfdi:Concepto"))
                             {
-                                if (reader.HasAttributes)
-                                {
-                                    UUID = reader.GetAttribute("UUID");
-                                    fecha = reader.GetAttribute("FechaTimbrado");
-                                    insertaD = "insertRecords'" + UUID + "','" + folio + "','" + serie + "','" + fecha + "','" + cliente + "','" + rfc + "','" + idNota + "','" + ruta + "'";
-                                    /*insertaD = "insertRecords '@uuid','@folio','@serie','@fecha','@cliente','@rfc','@idnota','@ruta'";
-                                    SqlCommand qcom = new SqlCommand(insertaD, con);
-                                    qcom.Parameters.AddWithValue("@uuid", UUID);
-                                    qcom.Parameters.AddWithValue("@folio", folio);
-                                    qcom.Parameters.AddWithValue("@serie", serie);
-                                    qcom.Parameters.AddWithValue("@fecha", fecha);
-                                    qcom.Parameters.AddWithValue("@cliente", cliente);
-                                    qcom.Parameters.AddWithValue("@rfc", rfc);
-                                    qcom.Parameters.AddWithValue("@idnota", idNota);
-                                    qcom.Parameters.AddWithValue("@ruta", ruta);
-                                    qcom.ExecuteNonQuery();*/
-                                    cmd = new SqlCommand(insertaD, con);
-                                    cmd.ExecuteNonQuery();
-                                }
-                            }
-                            if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "cfdi:Comprobante"))
-                            {
-                                if (reader.HasAttributes)
-                                {
-                                    folio = reader.GetAttribute("folio");
-                                    serie = reader.GetAttribute("serie");
-                                }
-                            }
-                            if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "cfdi:Emisor"))
-                            {
-                                if (reader.HasAttributes)
-                                {
-                                    rfc = reader.GetAttribute("rfc");
-                                    cliente = reader.GetAttribute("nombre");
-                                }
+                                        importe +=  float.Parse(reader.GetAttribute("importe"));
                             }
                         }
                         //TERMINA LECTURA DE XML
                     }
                     catch (Exception ex)
                     {
-                        System.IO.File.AppendAllText(@"C:\Users\Public\Documents\logxml.txt", ruta + "\r\n" + ex.Message + "\r\n");
+                        //System.IO.File.AppendAllText(@"C:\Users\Public\Documents\logxml.txt", ruta + "\r\n" + ex.Message + "\r\n");
                         err = err + ex.Message + "\n" + ruta;
-
-                        insertaLog = "INSERT into logxml (NoteID,Location,error)  VALUES (@idn,@ruta,@error);";
-                        SqlCommand command = new SqlCommand(insertaLog, con);
-                        command.Parameters.AddWithValue("@idn", idNota);
-                        command.Parameters.AddWithValue("@ruta", ruta);
-                        command.Parameters.AddWithValue("@error", ex.Message);
-                        command.ExecuteNonQuery();
                     }
                     ruta = string.Empty;
-                }
-                if(err.Length>0)
+                if (err.Length > 0)
                 {
                     MessageBox.Show(err, "Errores de lectura", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                MessageBox.Show("Datos guardados exitosamente!!!");
-            }
-            else
-            {
-                MessageBox.Show("No se encontro información =(");
-            }
+                MessageBox.Show(importe.ToString());
             con.Close();
             cbAnio.SelectedIndex = -1;
             cbMes.SelectedIndex = -1;
