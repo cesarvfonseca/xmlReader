@@ -22,8 +22,9 @@ namespace leerXML
         string periodo, ruta, insertaD, insertaLog;
         string a = string.Empty, m = string.Empty;
         string err = string.Empty;
-        string UUID, idNota, folio, serie, fecha, cliente, rfc;
-        float  importe;
+        string  idNota, folio, serie, fecha, cliente, rfc;
+        string rfcEmisor, nombreEmisor, rfcReceptor, nombreReceptor, tipoComprobante, fSerie, fFolio, nombreImpuesto, UUID,metodoPago;
+        double subTotal, impuestoT,Total,trasladoIVA;
         SqlCommand comando, cmd;
         XmlReader reader;
 
@@ -202,7 +203,9 @@ namespace leerXML
 
         private void btnLeer_Click(object sender, EventArgs e)
         {
-            importe = 0.0F;
+            subTotal = 0.0D;
+            impuestoT = 0.0D;
+            Total = 0.0D;
             a = cbAnio.Text;
             valorMes();
             UUID = string.Empty;
@@ -212,17 +215,48 @@ namespace leerXML
             con.Open();
             SqlDataReader leer = comando.ExecuteReader();
 
-            reader = XmlReader.Create("C:\\Users\\cvalenciano\\Desktop\\CE_LAyout\\xmlTest\\cerosss.xml");
+            reader = XmlReader.Create("C:\\Users\\cvalenciano\\Desktop\\CE_LAyout\\xmlTest\\algunos.xml");
                     try
                     {
                         //INICIA LECTURA DE XML
                         while (reader.Read())
                         {
+                            if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "cfdi:Emisor"))
+                            {
+                                rfcEmisor = reader.GetAttribute("rfc");//OBTENER RFC DEL EMISOR
+                                nombreEmisor = reader.GetAttribute("nombre");//OBTENER NOMBRE DEL EMISOR
+                            }
+                            if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "cfdi:Receptor"))
+                            {
+                                rfcReceptor = reader.GetAttribute("rfc");//OBTENER RFC DEL RECEPTOR
+                                nombreReceptor = reader.GetAttribute("nombre");//OBTENER NOMBRE DEL EMISOR
+                            }
+                            if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "cfdi:Comprobante"))
+                            {
+                                tipoComprobante = reader.GetAttribute("tipoDeComprobante");//OBTENER EL TIPO DEL COMPROBANTE
+                                fSerie = reader.GetAttribute("serie");//OBTENER LA SERIE DEL COMPROBANTE
+                                fFolio = reader.GetAttribute("folio");//OBTENER EL FOLIO DEL COMPROBANTE
+                                metodoPago = reader.GetAttribute("metodoDePago");//OBTENER EL FOLIO DEL COMPROBANTE
+                            }
+                            if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "cfdi:Impuestos"))
+                            {
+                                impuestoT = Math.Round(double.Parse(reader.GetAttribute("totalImpuestosTrasladados")),6);//OBTENER IMPORTE
+                            } 
                             if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "cfdi:Concepto"))
                             {
-                                        importe +=  float.Parse(reader.GetAttribute("importe"));
+                                subTotal += Math.Round(double.Parse(reader.GetAttribute("importe")),6);//OBTENER IMPORTE
+                            }
+                            if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "cfdi:Traslado"))
+                            {
+                                nombreImpuesto = reader.GetAttribute("impuesto");//OBTENER IMPUESTO
+                                trasladoIVA = Math.Round(double.Parse(reader.GetAttribute("importe")), 6);//OBTENER IMPORTE IVA
+                            }
+                            if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "tfd:TimbreFiscalDigital"))
+                            {
+                                UUID = reader.GetAttribute("UUID");//OBTENER UUID
                             }
                         }
+                        Total = Math.Round(subTotal + impuestoT,6);
                         //TERMINA LECTURA DE XML
                     }
                     catch (Exception ex)
@@ -235,7 +269,12 @@ namespace leerXML
                 {
                     MessageBox.Show(err, "Errores de lectura", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                MessageBox.Show(importe.ToString());
+                MessageBox.Show("RFCEmisor: "+rfcEmisor+
+                    "\nNombre Emiso: "+nombreEmisor+
+                    "\nRFC Receptor: "+
+                    rfcReceptor + "\nNombre Receptor: " + nombreReceptor + "\nTipo: " + tipoComprobante + "\nSerie: " + fSerie + "    Folio:" + fFolio +
+                    "\nSubtotal: " + subTotal.ToString() + "\nImpuestos Trasladados: " + impuestoT + "\nImpuesto: " + nombreImpuesto + "\nTotal: " + Total.ToString() +
+                    "\nUUID: "+UUID+"\nMetodo de pago: "+metodoPago+"\nTraslado de IVA: "+trasladoIVA);
             con.Close();
             cbAnio.SelectedIndex = -1;
             cbMes.SelectedIndex = -1;
