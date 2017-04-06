@@ -18,12 +18,12 @@ namespace leerXML
     public partial class Form1 : Form
     {
         //SqlConnection con = new SqlConnection("Data Source = ATALAYA-STD;" + "Initial Catalog = CSRAPP ; Integrated Security = true; MultipleActiveResultSets=true;");
-        SqlConnection con = new SqlConnection("Data Source=MEXQ-SERVER4;Initial Catalog=MEXQAppJulio;Persist Security Info=False;User ID=sa;Password=P@ssw0rd; MultipleActiveResultSets=true;");
+        SqlConnection con = new SqlConnection("Data Source=MEXQ-SERVER4;Initial Catalog=MEXQAppPr;Persist Security Info=False;User ID=sa;Password=P@ssw0rd; MultipleActiveResultSets=true;");
         string periodo, ruta, insertaD, insertaLog;
         string a = string.Empty, m = string.Empty;
         string err = string.Empty;
-        string rfcEmisor, nombreEmisor, rfcReceptor, nombreReceptor, tipoComprobante, fSerie, fFolio, UUID, metodoPago, fechaTimbrado, tasa, idNota;
-        string impuestoT, subTotal,Total;
+        string rfcEmisor, nombreEmisor, rfcReceptor, nombreReceptor, tipoComprobante, fSerie, fFolio, UUID, metodoPago, fechaTimbrado, IVA, idNota;
+        string subTotal,Total;
         //double subTotal, impuestoT, Total;
         SqlCommand comando, cmd;
         XmlReader reader;
@@ -248,9 +248,9 @@ namespace leerXML
                             //{
                             //    subTotal += double.Parse(reader.GetAttribute("importe"));//OBTENER IMPORTE
                             //}
-                            if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "cfdi:Traslado"))
+                            if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "cfdi:Impuestos"))
                             {
-                                tasa = reader.GetAttribute("tasa");//OBTENER IVA
+                                IVA = reader.GetAttribute("totalImpuestosTrasladados");//OBTENER IVA
                                 //impuestoT = reader.GetAttribute("totalImpuestosTrasladados");//OBTENER IMPORTE
                             }
                             if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "tfd:TimbreFiscalDigital"))
@@ -261,7 +261,7 @@ namespace leerXML
                             
                         }
                         //GUARDAR EN BD
-                        insertaD = "insertRecords '" + idNota + "','" + rfcEmisor + "','" + nombreEmisor + "','" + rfcReceptor + "','" + nombreReceptor + "','" + tipoComprobante + "','" + metodoPago + "','" + fSerie + "','" + fFolio + "','" + subTotal + "','" + tasa + "','" + Total + "','" + UUID + "','" + fechaTimbrado + "','" + ruta + "'";
+                        insertaD = "insertRecords '" + idNota + "','" + rfcEmisor + "','" + nombreEmisor + "','" + rfcReceptor + "','" + nombreReceptor + "','" + tipoComprobante + "','" + metodoPago + "','" + fSerie + "','" + fFolio + "','" + subTotal + "','" + IVA + "','" + Total + "','" + UUID + "','" + fechaTimbrado + "','" + ruta + "'";
                         cmd = new SqlCommand(insertaD, con);
                         cmd.ExecuteNonQuery();
                         //Total = subTotal + double.Parse(impuestoT);
