@@ -1,0 +1,147 @@
+SELECT * FROM MEXQAPPJulio.dbo.APDoc
+SELECT Refnbr,batnbr,curyorigdocamt, 
+* FROM MEXQAPPPr.dbo.APDoc WHERE noteid='31213'
+
+select * 
+SELECT * FROM MEXQSYSJulio.dbo.attachment
+EXEC vData'201602'
+--insertRecords 'CB3FCC75-62A4-4B6F-B671-461BBEF819FB','1539707','B','2016-05-12T12:20:36','ETN TURISTAR LUJO, S.A. DE C.V.','TLU080610C81','3212','C:\CFDi\fact55_cte17_cdfi.xml'
+--TRUNCATE TABLE xmldata;
+--TRUNCATE TABLE logxml;
+SELECT Total, * FROM xmldata order by noteid;
+SELECT Total, * FROM xmldata where noteid='30969'
+SELECT * FROM logxml;
+SELECT NoteID,Location,Error,DateCreated FROM logxml;
+--CONSULTA GLOBAL
+SELECT * FROM xmldata
+
+SELECT xd.noteid NoteXML,ad.noteid NoteERP,SUM (xd.Total) as TotalXML,ad.curyorigdocamt as TotalERP,xd.rfc_emisor,xd.nombre_emisor
+FROM xmldata as xd
+INNER JOIN APDoc as ad
+ON xd.noteid=ad.noteid
+GROUP BY xd.noteid,ad.noteid,ad.curyorigdocamt,xd.rfc_emisor,xd.nombre_emisor
+ORDER BY xd.noteid
+
+select 
+    case 
+        when GROUPING(noteid) = 1 and
+             --GROUPING(rfc_emisor) = 1 and 
+             GROUPING(rfc_emisor) = 1 then 'Total ' + rfc_emisor
+
+        when GROUPING(noteid) = 1 and
+             --GROUPING(rfc_emisor) = 1 and
+             GROUPING(rfc_emisor) =1 then 'Total'
+
+        else noteid end as noteid,
+    rfc_emisor,
+    sum(total) as DocTotal,
+    sum(total) as DueTotal 
+From xmldata 
+group by noteid,rfc_emisor with rollup
+
+SELECT rfc_emisor, nombre_emisor
+   , CASE
+      WHEN GROUPING(noteid) = 1 THEN null
+      ELSE SUM(total)
+     END as Totalxml
+   , CASE
+      WHEN GROUPING(noteid) = 1 THEN SUM(total)
+      ELSE NULL
+     END AS SubTotal
+FROM xmldata
+GROUP BY GROUPING SETS (noteid,rfc_emisor, nombre_emisor), (noteid)
+
+
+SELECT noteid,SUM (Total) as TotalXML 
+FROM xmldata 
+GROUP BY noteid
+ORDER BY noteid
+
+/*CREAR BD XMLDATA*/ 
+USE [MEXQAPPPr]
+GO
+/****** Object:  Table [dbo].[xmldata]    Script Date: 01/24/2017 08:30:35 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[xmldata](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[noteid] [nvarchar](10) NULL,
+	[rfc_emisor] [nvarchar](15) NULL,
+	[nombre_emisor] [nvarchar](50) NULL,
+	[rfc_receptor] [nvarchar](15) NULL,
+	[nombre_receptor] [nvarchar](50) NULL,
+	[tipo_comprobante] [nvarchar](15) NULL,
+	[metodo_pago] [nvarchar](25) NULL,
+	[serie] [nvarchar](10) NULL,
+	[folio] [nvarchar](10) NULL,
+	[subtotal] [float],
+	[tasa] [nvarchar](10) NULL,
+	[total] [float],
+	[uuid] [nvarchar](50) NULL,
+	[fecha_timbrado] [nvarchar](50) NULL,
+	[location] [nvarchar](250) NULL
+) ON [PRIMARY]
+GO
+/*CREAR BD XMLDATA*/
+/*CREAR BD LOGXML*/
+USE [MEXQAPPPr]
+GO
+/****** Object:  Table [dbo].[logxml]    Script Date: 01/24/2017 08:30:35 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[logxml](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[NoteID] [nvarchar](50) NULL,
+	[Location] [nvarchar](250) NULL,
+	[Error] [nvarchar](250) NULL,
+	[DateCreated] DATETIME NOT NULL DEFAULT(GETDATE())
+) ON [PRIMARY]
+GO
+/*CREAR BD LOGXML*/
+/*INSERTAR DATOS*/
+ALTER PROCEDURE dbo.insertRecords(
+	@noteid varchar(10),
+	@rfc_emisor varchar(15),
+	@nombre_emisor varchar(45),
+	@rfc_receptor varchar(15),
+	@nombre_receptor varchar(45),
+	@tipo_comprobante varchar(10),
+	@metodo_pago varchar(25),
+	@serie varchar(5),
+	@folio varchar(10),
+	@subtotal varchar(10),
+	@tasa varchar(5),
+	@total varchar(10),
+	@uuid varchar(50),
+	@fecha_timbrado varchar(20),
+	@location varchar(250)
+	)
+	AS
+	IF NOT EXISTS (SELECT * FROM xmldata WHERE UUID=@UUID)
+		BEGIN
+			INSERT INTO xmldata (noteid,rfc_emisor,nombre_emisor,rfc_receptor,nombre_receptor,tipo_comprobante,metodo_pago,serie,folio,subtotal,tasa,total,uuid,fecha_timbrado,location)
+			VALUES (@noteid,@rfc_emisor,@nombre_emisor,@rfc_receptor,@nombre_receptor,@tipo_comprobante,@metodo_pago,@serie,@folio,@subtotal,@tasa,@total,@uuid,@fecha_timbrado,@location)
+		END
+/*INSERTAR DATOS*/
+/*LISTAR DATOS*/
+USE [MEXQAPPPr]
+GO
+/****** Object:  StoredProcedure [dbo].[vData]    Script Date: 01/23/2017 14:00:18 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER procedure [dbo].[vData]
+@periodo nchar(15)
+as
+SELECT ad.BatNbr,ad.PerPost,
+att.NoteID,att.NameOfFile,att.Location
+FROM MEXQAPPPr.dbo.apdoc ad
+INNER JOIN MEXQSYSPr.dbo.attachment att
+ON ad.NoteID=att.NoteID
+WHERE ad.PerPost=@periodo AND att.Location LIKE '%.xml' ORDER BY att.NameOfFile
+/*LISTAR DATOS*/

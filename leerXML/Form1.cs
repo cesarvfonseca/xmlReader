@@ -17,14 +17,13 @@ namespace leerXML
 {
     public partial class Form1 : Form
     {
-        //SqlConnection con = new SqlConnection("Data Source = ATALAYA-STD;" + "Initial Catalog = CSRAPP ; Integrated Security = true; MultipleActiveResultSets=true;");
+        //SqlConnection con = new SqlConnection("Data Source = ATALAYA-STD;" + "Initial Catalog = CSRAPP ; Integrated Security = true; MultipleActiveResultSets=true;"); 
         SqlConnection con = new SqlConnection("Data Source=MEXQ-SERVER4;Initial Catalog=MEXQAppPr;Persist Security Info=False;User ID=sa;Password=P@ssw0rd; MultipleActiveResultSets=true;");
         string periodo, ruta, insertaD, insertaLog;
         string a = string.Empty, m = string.Empty;
         string err = string.Empty;
         string rfcEmisor, nombreEmisor, rfcReceptor, nombreReceptor, tipoComprobante, fSerie, fFolio, UUID, metodoPago, fechaTimbrado, IVA, idNota;
         string subTotal,Total;
-        //double subTotal, impuestoT, Total;
         SqlCommand comando, cmd;
         XmlReader reader;
 
@@ -244,10 +243,6 @@ namespace leerXML
                                 subTotal = reader.GetAttribute("subTotal");//OBTENER IMPORTE SUBTOTAL
                                 Total = reader.GetAttribute("total");//OBTENER IMPORTE TOTAL
                             }
-                            //if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "cfdi:Concepto"))
-                            //{
-                            //    subTotal += double.Parse(reader.GetAttribute("importe"));//OBTENER IMPORTE
-                            //}
                             if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "cfdi:Impuestos"))
                             {
                                 IVA = reader.GetAttribute("totalImpuestosTrasladados");//OBTENER IVA
@@ -264,7 +259,6 @@ namespace leerXML
                         insertaD = "insertRecords '" + idNota + "','" + rfcEmisor + "','" + nombreEmisor + "','" + rfcReceptor + "','" + nombreReceptor + "','" + tipoComprobante + "','" + metodoPago + "','" + fSerie + "','" + fFolio + "','" + subTotal + "','" + IVA + "','" + Total + "','" + UUID + "','" + fechaTimbrado + "','" + ruta + "'";
                         cmd = new SqlCommand(insertaD, con);
                         cmd.ExecuteNonQuery();
-                        //Total = subTotal + double.Parse(impuestoT);
                         //TERMINA LECTURA DE XML
                     }
                     catch (Exception ex)
