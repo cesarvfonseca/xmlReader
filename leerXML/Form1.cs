@@ -30,8 +30,22 @@ namespace leerXML
         public Form1()
         {
             InitializeComponent();
+            btnGenerar.Enabled = false;
             llenarCombo_anio();
             llenarCombo_mes();
+        }
+
+        void btnActivar(object sender, EventArgs e) 
+        {
+            RadioButton rb = sender as RadioButton;
+            if (rb != null)
+            {
+                if (rbActivar.Checked)
+                {
+                    // Only one radio button will be checked
+                    MessageBox.Show("Holi");
+                }
+            }
         }
 
         private void llenarCombo_anio()
@@ -272,7 +286,6 @@ namespace leerXML
                     {
                         //System.IO.File.AppendAllText(@"C:\Users\Public\Documents\logxml.txt", ruta + "\r\n" + ex.Message + "\r\n");
                         err = err + ex.Message + "\n" + ruta;
-
                         insertaLog = "INSERT into logxml (NoteID,Location,error)  VALUES (@idn,@ruta,@error);";
                         SqlCommand command = new SqlCommand(insertaLog, con);
                         command.Parameters.AddWithValue("@idn", idNota);
@@ -292,7 +305,7 @@ namespace leerXML
             }
             else
             {
-                MessageBox.Show("No se encontro información =(");
+                MessageBox.Show("No se encontro información");
             }
             con.Close();
             cbAnio.SelectedIndex = -1;
@@ -370,6 +383,17 @@ namespace leerXML
           }*/
 
         private void btnVLogs_Click(object sender, EventArgs e)
+        {
+            Logs logs = new Logs();
+            logs.Show();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Logs logs = new Logs();
             logs.Show();
