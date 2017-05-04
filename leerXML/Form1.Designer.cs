@@ -36,7 +36,6 @@
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.btnLeer = new System.Windows.Forms.Button();
             this.btnGenerar = new System.Windows.Forms.Button();
-            this.rbActivar = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // cbMes
@@ -101,22 +100,13 @@
             // 
             // btnGenerar
             // 
-            this.btnGenerar.Location = new System.Drawing.Point(52, 149);
+            this.btnGenerar.Location = new System.Drawing.Point(12, 136);
             this.btnGenerar.Name = "btnGenerar";
-            this.btnGenerar.Size = new System.Drawing.Size(178, 23);
+            this.btnGenerar.Size = new System.Drawing.Size(218, 36);
             this.btnGenerar.TabIndex = 9;
             this.btnGenerar.Text = "Generar Layuot";
             this.btnGenerar.UseVisualStyleBackColor = true;
-            // 
-            // rbActivar
-            // 
-            this.rbActivar.AutoSize = true;
-            this.rbActivar.Location = new System.Drawing.Point(16, 154);
-            this.rbActivar.Name = "rbActivar";
-            this.rbActivar.Size = new System.Drawing.Size(14, 13);
-            this.rbActivar.TabIndex = 10;
-            this.rbActivar.TabStop = true;
-            this.rbActivar.UseVisualStyleBackColor = true;
+            this.btnGenerar.Click += new System.EventHandler(this.btnGenerar_Click);
             // 
             // Form1
             // 
@@ -124,7 +114,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ClientSize = new System.Drawing.Size(242, 218);
-            this.Controls.Add(this.rbActivar);
             this.Controls.Add(this.btnGenerar);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.label2);
@@ -150,7 +139,6 @@
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Button btnLeer;
         private System.Windows.Forms.Button btnGenerar;
-        private System.Windows.Forms.RadioButton rbActivar;
     }
 }
 

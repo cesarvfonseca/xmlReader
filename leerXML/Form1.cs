@@ -12,6 +12,7 @@ using System.Xml.Serialization;
 using System.Xml.Linq;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.IO;
 
 namespace leerXML
 {
@@ -24,30 +25,32 @@ namespace leerXML
         string err = string.Empty;
         string rfcEmisor, nombreEmisor, rfcReceptor, nombreReceptor, tipoComprobante, fSerie, fFolio, UUID, metodoPago, fechaTimbrado, IVA, idNota;
         string subTotal,Total;
+        string d_Totalxml, d_rfcEmisor, d_nombreProveedor;
+        string P1, fechaPol,tipoPoliza, folio, clase, idDiarioP, conceptoP, sistOrig, impresa, ajuste, guidP;
+        string M1, idCuenta, referencia, tipoMonto, importe, idDiariom1, importeME, conceptoM1, idSegneg, guidM1;
+        string AM, uuidAM;
+        string AD, uuidAD;
+        string linea1;
+        //string[] polizaDatos;
+        string[] M1Datos;
+        string[] AMDatos;
+        string[] ADDatos;
+        int[] polizaLong = { 2, 8, 4, 9, 1, 10, 100, 3, 1, 1, 36 };
+        int[] M1Long = { 2, 30, 20, 1, 20, 10, 20, 100, 4, 36 };
+        int[] AMLong = { 2, 36 };
+        int[] ADLong = { 2, 36 };
+        string now = DateTime.Now.ToString("yyMMdd_hhmm");
         SqlCommand comando, cmd;
         XmlReader reader;
 
         public Form1()
         {
             InitializeComponent();
-            btnGenerar.Enabled = false;
             llenarCombo_anio();
             llenarCombo_mes();
         }
 
-        void btnActivar(object sender, EventArgs e) 
-        {
-            RadioButton rb = sender as RadioButton;
-            if (rb != null)
-            {
-                if (rbActivar.Checked)
-                {
-                    // Only one radio button will be checked
-                    MessageBox.Show("Holi");
-                }
-            }
-        }
-
+        
         private void llenarCombo_anio()
         {
             String sDate = DateTime.Now.ToString();
@@ -274,7 +277,6 @@ namespace leerXML
                                 UUID = reader.GetAttribute("UUID");//OBTENER UUID
                                 fechaTimbrado = reader.GetAttribute("FechaTimbrado");//OBTRENER FECHA TIMBRADO
                             }
-
                         }
                         //GUARDAR EN BD
                         insertaD = "insertRecords '" + idNota + "','" + rfcEmisor + "','" + nombreEmisor + "','" + rfcReceptor + "','" + nombreReceptor + "','" + tipoComprobante + "','" + metodoPago + "','" + fSerie + "','" + fFolio + "','" + subTotal + "','" + IVA + "','" + Total + "','" + UUID + "','" + fechaTimbrado + "','" + ruta + "'";
@@ -397,6 +399,84 @@ namespace leerXML
         {
             Logs logs = new Logs();
             logs.Show();
+        }
+
+        private string hl(string cadena, int n)
+        {
+            int numberOfLetters = cadena.Length;//Calcula la letras del string
+            int ne = n - numberOfLetters;//Calcular espacios en blanco a usar
+            if (ne < 0)
+                ne = 0;
+            string eBlanco = new string(' ', ne);//Asiga los espacion en blanco a la variable eBlanco
+            return cadena + eBlanco;//Regresa el string con los espacios en blanco
+        }
+
+
+        private void btnGenerar_Click(object sender, EventArgs e)
+        {
+            //string consulta = "SELECT * FROM XMLDATA WHERE rfc_emisor='HDM001017AS1'";
+            string consulta = "SELECT xd.uuid, xd.total, xd.serie,xd.folio,xd.rfc_emisor,xd.nombre_emisor,xd.fecha_timbrado,"+
+                                        "ad.PerPost , ad.RefNbr, ad.BatNbr "+
+                                        "FROM xmldata as xd "+
+                                        "inner join apdoc as ad "+
+                                        "on xd.noteid= ad.noteid "+
+                                        "where ad.Perpost = '201601' "+
+                                        "ORDER BY ad.PerPost;";
+            comando = new SqlCommand(consulta, con);
+            con.Open();
+            SqlDataReader reader = comando.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    P1 = "P";
+                    fechaPol = reader["fecha_timbrado"].ToString().Substring(0,10);
+                    fechaPol = fechaPol.Replace("-", string.Empty);
+                    tipoPoliza = "10";
+                    folio = reader["folio"].ToString();
+                    if (!(folio.Length < 9))
+                        folio = folio.Substring(0, 9);
+                    clase = "C";
+                    idDiarioP = "IDP";
+                    conceptoP = reader["serie"].ToString() + reader["folio"].ToString() +" "+ reader["nombre_emisor"].ToString();
+                    sistOrig = "SO";
+                    impresa = "I";
+                    ajuste = "A";
+                    guidP = reader["uuid"].ToString();
+                    string[] polizaDatos = { P1, fechaPol, tipoPoliza, folio, clase, idDiarioP, conceptoP, sistOrig, impresa, ajuste, guidP };
+                    for (int i = 0; i < polizaLong.Length; i++)
+                    {
+                        linea1 = linea1 + hl(polizaDatos[i], polizaLong[i]);
+                    }
+                    linea1 = linea1 + "\r\n";
+                }
+                /*ESCRIBIR EN EL DOCUMENTO*/
+                string folder = @"C:\output\";
+                string path = folder +now + ".txt";
+                // This text is added only once to the file.
+                if (!File.Exists(path))
+                {
+                    // Create a file to write to.
+                    string createText = linea1 + Environment.NewLine;
+                    File.WriteAllText(path, createText);
+                }
+
+                /*This text is always added, making the file longer over time
+                if it is not deleted.*/
+                //string appendText = "This is extra text" + Environment.NewLine;
+                //File.AppendAllText(path, appendText);
+
+                // Open the file to read from.
+                string readText = File.ReadAllText(path);
+                Console.WriteLine(readText);
+                /*ESCRIBIR EN EL DOCUMENTO*/
+                MessageBox.Show("Datos guardados exitosamente!!!");
+            }
+            else
+            {
+                MessageBox.Show("No se encontro información");
+            }
+            con.Close();
         }
     }
 }
