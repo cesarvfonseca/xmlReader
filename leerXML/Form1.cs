@@ -30,15 +30,11 @@ namespace leerXML
         string M1, idCuenta, referencia, tipoMonto, importe, idDiariom1, importeME, conceptoM1, idSegneg, guidM1;
         string AM, uuidAM;
         string AD, uuidAD;
-        string linea1;
-        //string[] polizaDatos;
-        string[] M1Datos;
-        string[] AMDatos;
-        string[] ADDatos;
-        int[] polizaLong = { 2, 8, 4, 9, 1, 10, 100, 3, 1, 1, 36 };
-        int[] M1Long = { 2, 30, 20, 1, 20, 10, 20, 100, 4, 36 };
-        int[] AMLong = { 2, 36 };
-        int[] ADLong = { 2, 36 };
+        string strGeneral,lineaPoliza,lineaM1,lineaAM,lineaAD;
+        int[] polizaLong = { 3, 9, 5, 10, 2, 11, 101, 4, 2, 2, 37 };
+        int[] M1Long = { 3, 31, 21, 2, 21, 11, 21, 101, 5, 37 };
+        int[] AMLong = { 3, 37 };
+        int[] ADLong = { 3, 37 };
         string now = DateTime.Now.ToString("yyMMdd_hhmm");
         SqlCommand comando, cmd;
         XmlReader reader;
@@ -414,7 +410,6 @@ namespace leerXML
 
         private void btnGenerar_Click(object sender, EventArgs e)
         {
-            //string consulta = "SELECT * FROM XMLDATA WHERE rfc_emisor='HDM001017AS1'";
             string consulta = "SELECT xd.uuid, xd.total, xd.serie,xd.folio,xd.rfc_emisor,xd.nombre_emisor,xd.fecha_timbrado,"+
                                         "ad.PerPost , ad.RefNbr, ad.BatNbr "+
                                         "FROM xmldata as xd "+
@@ -429,13 +424,14 @@ namespace leerXML
             {
                 while (reader.Read())
                 {
+                    /*LINEA POLIZA*/
                     P1 = "P";
                     fechaPol = reader["fecha_timbrado"].ToString().Substring(0,10);
                     fechaPol = fechaPol.Replace("-", string.Empty);
                     tipoPoliza = "10";
-                    folio = reader["folio"].ToString();
-                    if (!(folio.Length < 9))
-                        folio = folio.Substring(0, 9);
+                    folio = reader["BatNbr"].ToString();
+                    //if (!(folio.Length < 9))
+                    //    folio = folio.Substring(0, 9);
                     clase = "C";
                     idDiarioP = "IDP";
                     conceptoP = reader["serie"].ToString() + reader["folio"].ToString() +" "+ reader["nombre_emisor"].ToString();
@@ -446,30 +442,81 @@ namespace leerXML
                     string[] polizaDatos = { P1, fechaPol, tipoPoliza, folio, clase, idDiarioP, conceptoP, sistOrig, impresa, ajuste, guidP };
                     for (int i = 0; i < polizaLong.Length; i++)
                     {
-                        linea1 = linea1 + hl(polizaDatos[i], polizaLong[i]);
+                        lineaPoliza = lineaPoliza + hl(polizaDatos[i], polizaLong[i]);
                     }
-                    linea1 = linea1 + "\r\n";
+                    lineaPoliza = lineaPoliza + "\r\n";
+                    /*LINEA POLIZA*/
+
+                    /*LINEA M1*/
+                    M1 = "M1";
+                    idCuenta = "id Cuenta";
+                    referencia = reader["serie"].ToString() + reader["folio"].ToString();
+                    tipoMonto = "T";
+                    importe = reader["total"].ToString();
+                    idDiariom1 = "idDiario";
+                    importeME = "0.00";
+                    conceptoM1 = reader["serie"].ToString() + reader["folio"].ToString() + " " + reader["nombre_emisor"].ToString();
+                    idSegneg = "ISN";
+                    guidM1 = reader["uuid"].ToString();
+                    string[] M1Datos = { M1, idCuenta, referencia, tipoMonto, importe, idDiariom1,importeME,conceptoM1, idSegneg, guidM1};
+                    for (int i = 0; i < M1Long.Length; i++)
+                    {
+                        lineaM1 = lineaM1 + hl(M1Datos[i], M1Long[i]);
+                    }
+                    lineaM1 = lineaM1 + "\r\n";
+                    /*LINEA M1*/
+
+                    /*LINEA AM*/
+                    AM = "AM";
+                    uuidAM = reader["uuid"].ToString();
+                    string[] AMDatos = {  AM,uuidAM };
+                    for (int i = 0; i < AMLong.Length; i++)
+                    {
+                        lineaAM = lineaAM + hl(AMDatos[i], AMLong[i]);
+                    }
+                    lineaAM = lineaAM + "\r\n";
+                    /*LINEA AM*/
+
+                    /*LINEA AD*/
+                    AD="AD";
+                    uuidAD = reader["uuid"].ToString();
+                    string[] ADDatos = { AD, uuidAD };
+                    for (int i = 0; i < ADDatos.Length; i++)
+                    {
+                        lineaAD = lineaAD + hl(ADDatos[i], ADLong[i]);
+                    }
+                    lineaAD = lineaAD + "\r\n";
+                    /*LINEA AD*/
+                    strGeneral = strGeneral+lineaPoliza + lineaM1+lineaAM;
+                    lineaM1 = String.Empty;
+                    lineaPoliza = String.Empty;
+                    lineaAM = String.Empty;
                 }
                 /*ESCRIBIR EN EL DOCUMENTO*/
                 string folder = @"C:\output\";
-                string path = folder +now + ".txt";
+                string path = folder + now + ".txt";
                 // This text is added only once to the file.
                 if (!File.Exists(path))
                 {
                     // Create a file to write to.
-                    string createText = linea1 + Environment.NewLine;
+                    string createText = strGeneral + Environment.NewLine;
                     File.WriteAllText(path, createText);
                 }
-
+                
                 /*This text is always added, making the file longer over time
                 if it is not deleted.*/
-                //string appendText = "This is extra text" + Environment.NewLine;
-                //File.AppendAllText(path, appendText);
-
+                string appendText = lineaAD +Environment.NewLine;
+                File.AppendAllText(path, appendText);
                 // Open the file to read from.
                 string readText = File.ReadAllText(path);
                 Console.WriteLine(readText);
                 /*ESCRIBIR EN EL DOCUMENTO*/
+
+                /*BORRAR ESPACIO EN BLANCO*/
+                string data = File.ReadAllText(path).Replace("\r\n\r\n", "\r\n");
+                File.WriteAllText(path, data);
+                /*BORRAR ESPACIO EN BLANCO*/
+
                 MessageBox.Show("Datos guardados exitosamente!!!");
             }
             else
