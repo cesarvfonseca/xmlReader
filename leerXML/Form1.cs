@@ -25,12 +25,12 @@ namespace leerXML
         string err = string.Empty;
         string rfcEmisor, nombreEmisor, rfcReceptor, nombreReceptor, tipoComprobante, fSerie, fFolio, UUID, metodoPago, fechaTimbrado, IVA, idNota;
         string subTotal,Total;
-        string d_Totalxml, d_rfcEmisor, d_nombreProveedor;
+        string noPoliza;
         string P1, fechaPol,tipoPoliza, folio, clase, idDiarioP, conceptoP, sistOrig, impresa, ajuste, guidP;
         string M1, idCuenta, referencia, tipoMonto, importe, idDiariom1, importeME, conceptoM1, idSegneg, guidM1;
         string AM, uuidAM;
         string AD, uuidAD;
-        string strGeneral,lineaPoliza,lineaM1,lineaAM,lineaAD;
+        string strGeneral,lineaPoliza,lineaM1,lineaAM,lineaAD,movimientosLinea;
         int[] polizaLong = { 3, 9, 5, 10, 2, 11, 101, 4, 2, 2, 37 };
         int[] M1Long = { 3, 31, 21, 2, 21, 11, 21, 101, 5, 37 };
         int[] AMLong = { 3, 37 };
@@ -416,7 +416,7 @@ namespace leerXML
                                         "inner join apdoc as ad "+
                                         "on xd.noteid= ad.noteid "+
                                         "where ad.Perpost = '201601' "+
-                                        "ORDER BY ad.PerPost;";
+                                        "ORDER BY ad.BatNbr;";
             comando = new SqlCommand(consulta, con);
             con.Open();
             SqlDataReader reader = comando.ExecuteReader();
@@ -438,7 +438,8 @@ namespace leerXML
                     sistOrig = "SO";
                     impresa = "I";
                     ajuste = "A";
-                    guidP = reader["uuid"].ToString();
+                    //guidP = reader["uuid"].ToString();
+                    guidP = "";
                     string[] polizaDatos = { P1, fechaPol, tipoPoliza, folio, clase, idDiarioP, conceptoP, sistOrig, impresa, ajuste, guidP };
                     for (int i = 0; i < polizaLong.Length; i++)
                     {
@@ -446,51 +447,59 @@ namespace leerXML
                     }
                     lineaPoliza = lineaPoliza + "\r\n";
                     /*LINEA POLIZA*/
+                    noPoliza = folio;
+                    //while (folio.Equals(noPoliza))
+                    //{
+                        /*LINEA M1*/
+                        M1 = "M1";
+                        idCuenta = "id Cuenta";
+                        referencia = reader["serie"].ToString() + reader["folio"].ToString();
+                        tipoMonto = "T";
+                        importe = reader["total"].ToString();
+                        idDiariom1 = "idDiario";
+                        importeME = "0.00";
+                        conceptoM1 = reader["serie"].ToString() + reader["folio"].ToString() + " " + reader["nombre_emisor"].ToString();
+                        idSegneg = "ISN";
+                        guidM1 = reader["uuid"].ToString();
+                        string[] M1Datos = { M1, idCuenta, referencia, tipoMonto, importe, idDiariom1, importeME, conceptoM1, idSegneg, guidM1 };
+                        for (int i = 0; i < M1Long.Length; i++)
+                        {
+                            lineaM1 = lineaM1 + hl(M1Datos[i], M1Long[i]);
+                        }
+                        lineaM1 = lineaM1 + "\r\n";
+                        /*LINEA M1*/
 
-                    /*LINEA M1*/
-                    M1 = "M1";
-                    idCuenta = "id Cuenta";
-                    referencia = reader["serie"].ToString() + reader["folio"].ToString();
-                    tipoMonto = "T";
-                    importe = reader["total"].ToString();
-                    idDiariom1 = "idDiario";
-                    importeME = "0.00";
-                    conceptoM1 = reader["serie"].ToString() + reader["folio"].ToString() + " " + reader["nombre_emisor"].ToString();
-                    idSegneg = "ISN";
-                    guidM1 = reader["uuid"].ToString();
-                    string[] M1Datos = { M1, idCuenta, referencia, tipoMonto, importe, idDiariom1,importeME,conceptoM1, idSegneg, guidM1};
-                    for (int i = 0; i < M1Long.Length; i++)
-                    {
-                        lineaM1 = lineaM1 + hl(M1Datos[i], M1Long[i]);
-                    }
-                    lineaM1 = lineaM1 + "\r\n";
-                    /*LINEA M1*/
+                        /*LINEA AM*/
+                        AM = "AM";
+                        uuidAM = reader["uuid"].ToString();
+                        string[] AMDatos = { AM, uuidAM };
+                        for (int i = 0; i < AMLong.Length; i++)
+                        {
+                            lineaAM = lineaAM + hl(AMDatos[i], AMLong[i]);
+                        }
+                        lineaAM = lineaAM + "\r\n";
+                        /*LINEA AM*/
 
-                    /*LINEA AM*/
-                    AM = "AM";
-                    uuidAM = reader["uuid"].ToString();
-                    string[] AMDatos = {  AM,uuidAM };
-                    for (int i = 0; i < AMLong.Length; i++)
-                    {
-                        lineaAM = lineaAM + hl(AMDatos[i], AMLong[i]);
-                    }
-                    lineaAM = lineaAM + "\r\n";
-                    /*LINEA AM*/
+                        /*LINEA AD*/
+                        AD = "AD";
+                        uuidAD = reader["uuid"].ToString();
+                        string[] ADDatos = { AD, uuidAD };
+                        for (int i = 0; i < ADDatos.Length; i++)
+                        {
+                            lineaAD = lineaAD + hl(ADDatos[i], ADLong[i]);
+                        }
+                        lineaAD = lineaAD + lineaAD + "\r\n";
+                        /*LINEA AD*/
 
-                    /*LINEA AD*/
-                    AD="AD";
-                    uuidAD = reader["uuid"].ToString();
-                    string[] ADDatos = { AD, uuidAD };
-                    for (int i = 0; i < ADDatos.Length; i++)
-                    {
-                        lineaAD = lineaAD + hl(ADDatos[i], ADLong[i]);
-                    }
-                    lineaAD = lineaAD + "\r\n";
-                    /*LINEA AD*/
-                    strGeneral = strGeneral+lineaPoliza + lineaM1+lineaAM;
-                    lineaM1 = String.Empty;
-                    lineaPoliza = String.Empty;
-                    lineaAM = String.Empty;
+                        //movimientosLinea = movimientosLinea+lineaPoliza + lineaM1 + lineaAM;
+                        strGeneral = strGeneral + lineaPoliza + lineaM1 + lineaAM + lineaAD;
+                        lineaPoliza = String.Empty;
+                        lineaM1 = String.Empty;
+                        lineaAM = String.Empty;
+                        lineaAD = String.Empty;
+                        noPoliza = String.Empty;
+                    //}
+                    
                 }
                 /*ESCRIBIR EN EL DOCUMENTO*/
                 string folder = @"C:\output\";
